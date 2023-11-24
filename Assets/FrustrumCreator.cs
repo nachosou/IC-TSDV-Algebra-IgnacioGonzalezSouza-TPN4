@@ -105,9 +105,70 @@ public class FrustrumCreator : MonoBehaviour
         Vector3 p3 = new Vector3(-10, cameraPosition.y + (-d - normal.y * -10 - normal.z * 10) / normal.x, 10) + new Vector3(cameraPosition.x, 0, cameraPosition.z);
 
         // Dibuja el plano ajustado a la posición de la cámara
-        Gizmos.DrawLine(p0, p1);
-        Gizmos.DrawLine(p1, p2);
-        Gizmos.DrawLine(p2, p3);
-        Gizmos.DrawLine(p3, p0);
+        Gizmos.DrawLine(p0, p1); //bottom Line
+        Gizmos.DrawLine(p1, p2); //right Line
+        Gizmos.DrawLine(p2, p3); //top Line
+        Gizmos.DrawLine(p3, p0); //left Line
+
+        Vector3 p4 = new Vector3(10, p1.y, p3.z);
+        Vector3 p5 = new Vector3(-10, p0.y, p2.z);
+
+        Gizmos.DrawLine(p2, p4);
+
+        Gizmos.DrawLine(p3, p5);
+
+        //float halfWidth = Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad) * camera.nearClipPlane;
+        //float halfHeight = halfWidth / camera.aspect;
+
+        //Vector3 right = camera.transform.right * halfWidth;
+        //Vector3 up = camera.transform.up * halfHeight;
+        //Vector3 forward = camera.transform.forward * camera.nearClipPlane;
+
+        //Vector3 topLeft = camera.transform.position + forward - right + up;
+        //Vector3 topRight = camera.transform.position + forward + right + up;
+        //Vector3 bottomLeft = camera.transform.position + forward - right - up;
+        //Vector3 bottomRight = camera.transform.position + forward + right - up;
+
+        //Gizmos.DrawLine(topLeft, bottomLeft); // Connect top-left with bottom-left
+        //Gizmos.DrawLine(topRight, bottomRight); // Connect top-right with bottom-right
+        //Gizmos.DrawLine(topLeft, topRight); // Connect top-left with top-right
+        //Gizmos.DrawLine(bottomLeft, bottomRight); // Connect bottom-left with bottom-right
+
+        //float nearDistance = camera.nearClipPlane;
+        //float farDistance = camera.farClipPlane;
+
+        //float aspectRatio = camera.aspect;
+        //float verticalFOV = camera.fieldOfView * Mathf.Deg2Rad;
+        //float horizontalFOV = 2f * Mathf.Atan(Mathf.Tan(verticalFOV * 0.5f) * aspectRatio);
+
+        //float halfWidthNear = nearDistance * Mathf.Tan(horizontalFOV * 0.5f);
+        //float halfHeightNear = nearDistance * Mathf.Tan(verticalFOV * 0.5f);
+
+        //float halfWidthFar = farDistance * Mathf.Tan(horizontalFOV * 0.5f);
+        //float halfHeightFar = farDistance * Mathf.Tan(verticalFOV * 0.5f);
+
+        //Vector3 cameraForward = camera.transform.forward;
+        //Vector3 cameraUp = camera.transform.up;
+        //Vector3 cameraRight = camera.transform.right;
+
+        //Vector3 topLeftNear = cameraPosition + (cameraForward * nearDistance) - (cameraRight * halfWidthNear) + (cameraUp * halfHeightNear);
+        //Vector3 bottomLeftNear = cameraPosition + (cameraForward * nearDistance) - (cameraRight * halfWidthNear) - (cameraUp * halfHeightNear);
+        //Vector3 topRightNear = cameraPosition + (cameraForward * nearDistance) + (cameraRight * halfWidthNear) + (cameraUp * halfHeightNear);
+        //Vector3 bottomRightNear = cameraPosition + (cameraForward * nearDistance) + (cameraRight * halfWidthNear) - (cameraUp * halfHeightNear);
+
+        //Vector3 topLeftFar = cameraPosition + (cameraForward * farDistance) - (cameraRight * halfWidthFar) + (cameraUp * halfHeightFar);
+        //Vector3 bottomLeftFar = cameraPosition + (cameraForward * farDistance) - (cameraRight * halfWidthFar) - (cameraUp * halfHeightFar);
+        //Vector3 topRightFar = cameraPosition + (cameraForward * farDistance) + (cameraRight * halfWidthFar) + (cameraUp * halfHeightFar);
+        //Vector3 bottomRightFar = cameraPosition + (cameraForward * farDistance) + (cameraRight * halfWidthFar) - (cameraUp * halfHeightFar);
+
+        //Gizmos.DrawLine(topLeftNear, bottomLeftNear);
+        //Gizmos.DrawLine(topRightNear, bottomRightNear);
+        //Gizmos.DrawLine(topLeftFar, bottomLeftFar);
+        //Gizmos.DrawLine(topRightFar, bottomRightFar);
+
+        //Gizmos.DrawLine(topLeftNear, topLeftFar);
+        //Gizmos.DrawLine(bottomLeftNear, bottomLeftFar);
+        //Gizmos.DrawLine(topRightNear, topRightFar);
+        //Gizmos.DrawLine(bottomRightNear, bottomRightFar);
     }
 }
