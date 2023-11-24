@@ -152,7 +152,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 186044ba4c85e41448b32b3eb5296475, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fov: 0
+  farDist: 0
+  nearDist: 0
+  screenWidth: 0
+  screenHeight: 0
   objectToCull: {fileID: 2106209414}
+  nearCenter: {x: 0, y: 0, z: 0}
+  farCenter: {x: 0, y: 0, z: 0}
+  vertexList: []
 --- !u!4 &262274238
 Transform:
   m_ObjectHideFlags: 0
@@ -301,7 +309,7 @@ Camera:
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
-  m_FOVAxisMode: 0
+  m_FOVAxisMode: 1
   m_Iso: 200
   m_ShutterSpeed: 0.005
   m_Aperture: 16
@@ -321,7 +329,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 18.883577
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -348,7 +356,7 @@ Transform:
   m_GameObject: {fileID: 1619776182}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 1.57, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
