@@ -64,21 +64,47 @@ public class FrustrumCreator : MonoBehaviour
         {
             foreach (var plane in frustumPlanes)
             {
-                DrawPlane(plane);
+                DrawPlane(plane, mainCamera);
             }
         }
     }
 
-    void DrawPlane(Plane plane)
+    //void DrawPlane(Plane plane, Camera camera)
+    //{
+    //    Vector3 normal = plane.normal;
+    //    float d = plane.distance;
+
+    //    // Obtén la posición de la cámara
+    //    Vector3 cameraPosition = camera.transform.position;
+
+    //    // Ajusta las coordenadas del plano en función de la posición de la cámara
+    //    Vector3 p0 = new Vector3(-10, (-d - normal.x * -10 - normal.y * -10) / normal.z, -10) + cameraPosition;
+    //    Vector3 p1 = new Vector3(10, (-d - normal.x * 10 - normal.y * -10) / normal.z, -10) + cameraPosition;
+    //    Vector3 p2 = new Vector3(10, (-d - normal.x * 10 - normal.y * 10) / normal.z, 10) + cameraPosition;
+    //    Vector3 p3 = new Vector3(-10, (-d - normal.x * -10 - normal.y * 10) / normal.z, 10) + cameraPosition;
+
+    //    // Dibuja el plano ajustado a la posición de la cámara
+    //    Gizmos.DrawLine(p0, p1);
+    //    Gizmos.DrawLine(p1, p2);
+    //    Gizmos.DrawLine(p2, p3);
+    //    Gizmos.DrawLine(p3, p0);
+    //}
+
+    void DrawPlane(Plane plane, Camera camera)
     {
         Vector3 normal = plane.normal;
         float d = plane.distance;
 
-        Vector3 p0 = new Vector3(-10, (-d - normal.x * -10 - normal.y * -10) / normal.z, -10);
-        Vector3 p1 = new Vector3(10, (-d - normal.x * 10 - normal.y * -10) / normal.z, -10);
-        Vector3 p2 = new Vector3(10, (-d - normal.x * 10 - normal.y * 10) / normal.z, 10);
-        Vector3 p3 = new Vector3(-10, (-d - normal.x * -10 - normal.y * 10) / normal.z, 10);
+        // Obtén la posición de la cámara
+        Vector3 cameraPosition = camera.transform.position;
 
+        // Ajusta las coordenadas del plano en función de la posición de la cámara
+        Vector3 p0 = new Vector3(-10, cameraPosition.y + (-d - normal.y * -10 - normal.z * -10) / normal.x, -10) + new Vector3(cameraPosition.x, 0, cameraPosition.z);
+        Vector3 p1 = new Vector3(10, cameraPosition.y + (-d - normal.y * 10 - normal.z * -10) / normal.x, -10) + new Vector3(cameraPosition.x, 0, cameraPosition.z);
+        Vector3 p2 = new Vector3(10, cameraPosition.y + (-d - normal.y * 10 - normal.z * 10) / normal.x, 10) + new Vector3(cameraPosition.x, 0, cameraPosition.z);
+        Vector3 p3 = new Vector3(-10, cameraPosition.y + (-d - normal.y * -10 - normal.z * 10) / normal.x, 10) + new Vector3(cameraPosition.x, 0, cameraPosition.z);
+
+        // Dibuja el plano ajustado a la posición de la cámara
         Gizmos.DrawLine(p0, p1);
         Gizmos.DrawLine(p1, p2);
         Gizmos.DrawLine(p2, p3);
