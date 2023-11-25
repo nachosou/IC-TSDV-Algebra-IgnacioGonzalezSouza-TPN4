@@ -7,21 +7,23 @@ public class BoundingBox : MonoBehaviour
     [SerializeField] private List<Vector3> vertices = new List<Vector3>();
     public struct MyBounds
     {
-        private Vector3 center;
-        private Vector3 extents;
-        private Vector3 minimum;
-        private Vector3 maximum;
-       
+        private Vector3 m_Center;
+
+        private Vector3 m_Extents;
+
+        private Vector3 min;
+        private Vector3 max;
+  
         public Vector3 center
         {
             get
             {
-                return center;
+                return m_Center;
             }
 
             set
             {
-                center = value;
+                m_Center = value;
             }
         }
 
@@ -29,31 +31,31 @@ public class BoundingBox : MonoBehaviour
         {
             get
             {
-                return extents * 2f;
+                return m_Extents * 2f;
             }
 
             set
             {
-                extents = value * 0.5f;
+                m_Extents = value * 0.5f;
             }
         }
 
-        public MyBounds(Vector3 center, Vector3 size, Vector3 minimum, Vector3 maximum)
+        public MyBounds(Vector3 center, Vector3 size, Vector3 min, Vector3 max)
         {
-            center = center;
-            extents = size * 0.5f;
-            this.minimum = minimum;
-            this.maximum = maximum;
+            m_Center = center;
+            m_Extents = size * 0.5f;
+            this.min = min;
+            this.max = max;
         }
 
         public Vector3 GetMin()
         {
-            return minimum;
+            return min;
         }
 
         public Vector3 GetMax()
         {
-            return maximum;
+            return max;
         }
     }
 
