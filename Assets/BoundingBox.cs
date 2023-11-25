@@ -138,7 +138,7 @@ public class BoundingBox : MonoBehaviour
         for (int i = 0; i < 8; i++)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawCube(GetBoundsVertices()[i], new Vector3(0.2f, 0.2f, 0.2f));
+            Gizmos.DrawSphere(GetBoundsVertices()[i], 0.06f);
         }
     }
 
