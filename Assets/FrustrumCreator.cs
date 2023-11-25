@@ -1,10 +1,26 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
+//[ExecuteAlways]
 public class FrustrumCreator : MonoBehaviour
 {
+    public class FrustumPlane
+    {
+        public Vector3 vertexA;
+        public Vector3 vertexB;
+        public Vector3 vertexC;
+
+        public Vector3 normal;
+    }
+
+    public FrustumPlane nearPlane = new FrustumPlane();
+    public FrustumPlane farPlane = new FrustumPlane();
+
+    public FrustumPlane leftPlane = new FrustumPlane();
+    public FrustumPlane rightPlane = new FrustumPlane();
+    public FrustumPlane upPlane = new FrustumPlane();
+    public FrustumPlane downPlane = new FrustumPlane();
+
     public float fov;
     private float vFov;
 
@@ -15,7 +31,8 @@ public class FrustrumCreator : MonoBehaviour
     public int screenHeight;
     private float aspectRatio;
 
-    public GameObject objectToCull;
+    public List<BoundingBox> boundinToCheck = new List<BoundingBox>();
+    public List<FrustumPlane> planes = new List<FrustumPlane>();
 
     //El offset desde la posicion en la que esta
     private Vector3 nearCenter;
@@ -36,11 +53,13 @@ public class FrustrumCreator : MonoBehaviour
     void Start()
     {
         AddVerticesToList();
+        AddPlanesToList();
     }
 
     void Update()
     {
         UpdateVertex();
+        UpdatePlanes();
 
         aspectRatio = (float)screenWidth / (float)screenHeight;
 
@@ -60,6 +79,8 @@ public class FrustrumCreator : MonoBehaviour
         farUpRightV = new Vector3(Mathf.Tan((fov / 2) * Mathf.Deg2Rad) * farDist + farCenter.x, Mathf.Tan((vFov / 2) * Mathf.Deg2Rad) * farDist + farCenter.y, farCenter.z);
         farDownLeftV = new Vector3(Mathf.Tan((-fov / 2) * Mathf.Deg2Rad) * farDist + farCenter.x, Mathf.Tan((-vFov / 2) * Mathf.Deg2Rad) * farDist + farCenter.y, farCenter.z);
         farDownRightV = new Vector3(Mathf.Tan((fov / 2) * Mathf.Deg2Rad) * farDist + farCenter.x, Mathf.Tan((-vFov / 2) * Mathf.Deg2Rad) * farDist + farCenter.y, farCenter.z);
+
+        CheckObsjectsInFrustum();
     }
 
     void AddVerticesToList()
@@ -94,30 +115,35 @@ public class FrustrumCreator : MonoBehaviour
         vertexList.Add(nearDownRightV);
         vertexList.Add(nearDownLeftV);
     }
-   
+
     void UpdateVertex()
     {
-        //Update triangles
-        vertexList[0] = transform.position;
+        //Update triangulo superior
+        vertexList[0] = nearUpRightV;
         vertexList[1] = farUpRightV;
         vertexList[2] = farUpLeftV;
 
-        vertexList[3] = transform.position;
+        //Update triangulo derecho
+        vertexList[3] = nearUpRightV;
         vertexList[4] = farUpRightV;
         vertexList[5] = farDownRightV;
 
-        vertexList[6] = transform.position;
+        //Update triangulo inferior
+        vertexList[6] = nearDownLeftV;
         vertexList[7] = farDownRightV;
         vertexList[8] = farDownLeftV;
 
-        vertexList[9] = transform.position;
+        //Update triangulo izquierdo
+        vertexList[9] = nearDownLeftV;
         vertexList[10] = farUpLeftV;
         vertexList[11] = farDownLeftV;
 
+        //Update triangulo del far plane
         vertexList[12] = farUpRightV;
         vertexList[13] = farDownRightV;
         vertexList[14] = farDownLeftV;
 
+        //Update triangulo del near plane
         vertexList[15] = nearUpRightV;
         vertexList[16] = nearDownRightV;
         vertexList[17] = nearDownLeftV;
@@ -141,9 +167,106 @@ public class FrustrumCreator : MonoBehaviour
         Gizmos.DrawLine(farDownLeftV, farUpLeftV);
     }
 
+    void AddPlanesToList()
+    {
+        planes.Add(upPlane);
+        planes.Add(rightPlane);
+        planes.Add(downPlane);
+        planes.Add(leftPlane);
+
+        planes.Add(farPlane);
+        planes.Add(nearPlane);
+    }
+
+    void UpdatePlanes()
+    {
+        Vector3 point = transform.position + transform.forward * ((farDist - nearDist) / 2 + nearDist); //
+
+        for (int i = 0; i < planes.Count; i++)
+        {
+            planes[i].vertexA = vertexList[i * 3 + 0];
+            planes[i].vertexB = vertexList[i * 3 + 1];
+            planes[i].vertexC = vertexList[i * 3 + 2];
+
+            Vector3 vectorAB = planes[i].vertexB - planes[i].vertexA;
+            Vector3 vectorAC = planes[i].vertexC - planes[i].vertexA;
+
+            Vector3 normalPlane = Vector3.Cross(vectorAB, vectorAC).normalized;
+
+            Vector3 vectorToPlane = point - planes[i].vertexA;
+            float distanceToPlane = Vector3.Dot(vectorToPlane, normalPlane) / normalPlane.magnitude;
+
+            if (distanceToPlane > 0.0f)
+            {
+                planes[i].normal = normalPlane;
+            }
+            else
+            {
+                planes[i].normal = normalPlane * -1;
+            }
+        }
+    }
+
+    float PlanePointDistance(FrustumPlane plane, Vector3 pointToCheck) //Revisar esta función
+    {
+        float dist = Vector3.Dot(plane.normal, (pointToCheck - plane.vertexA) / plane.normal.magnitude);
+        return dist;
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
         DrawFrustum();
+
+        Gizmos.color = Color.red;
+        for (int i = 0; i < planes.Count; i++)
+        {
+            Gizmos.DrawLine(planes[i].vertexA, planes[i].vertexA + planes[i].normal * 2);
+        }
+    }
+
+    bool CheckObsjectsInFrustum()
+    {
+        for (int i = 0; i < boundinToCheck.Count; i++)
+        {
+            if(IsObjectFrustum(i))
+            {
+                Debug.Log(boundinToCheck[i].name + " esta adentro");
+                boundinToCheck[i].gameObject.GetComponent<MeshRenderer>().enabled = true;
+            }
+            else
+            {
+                Debug.Log(boundinToCheck[i].name + " esta afuera");
+                boundinToCheck[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
+            }
+        }
+
+        return true;
+    }
+
+    bool IsObjectFrustum(int i)
+    {
+        for (int k = 0; k < planes.Count; k++) //Recorrer hasta planes.count
+        {
+            if (!IsObjectInPlane(i, k)) //Si esta afuera de un plano esta afuera del frustum
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool IsObjectInPlane(int i, int k)
+    {
+        for (int j = 0; j < boundinToCheck[i].Vertices.Count; j++)
+        {
+            if (PlanePointDistance(planes[k], boundinToCheck[i].Vertices[j]) > 0.0f)
+            {
+                return true;
+                //Si hay un punto dentro, entonces esta dentro
+            }
+        }
+        return false;
     }
 }

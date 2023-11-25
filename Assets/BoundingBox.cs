@@ -1,10 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BoundingBox : MonoBehaviour
 {
     [SerializeField] private List<Vector3> vertices = new List<Vector3>();
+    public List <Vector3> Vertices => vertices;
+
     public struct MyBounds
     {
         private Vector3 m_Center;
