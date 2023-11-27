@@ -180,7 +180,7 @@ public class FrustrumCreator : MonoBehaviour
 
     void UpdatePlanes()
     {
-        Vector3 point = transform.position + transform.forward * ((farDist - nearDist) / 2 + nearDist); //
+        Vector3 point = transform.position + transform.forward * ((farDist - nearDist) / 2 + nearDist); //Punto en el centro de la figura
 
         for (int i = 0; i < planes.Count; i++)
         {
@@ -191,25 +191,26 @@ public class FrustrumCreator : MonoBehaviour
             Vector3 vectorAB = planes[i].vertexB - planes[i].vertexA;
             Vector3 vectorAC = planes[i].vertexC - planes[i].vertexA;
 
-            Vector3 normalPlane = Vector3.Cross(vectorAB, vectorAC).normalized;
+            Vector3 normalPlane = Vector3.Cross(vectorAB, vectorAC).normalized; //Calcula la normal con producto cruz y la normaliza
 
+            //Verifica la orientación y la cambia en caso de que no sea hacia el centro
             Vector3 vectorToPlane = point - planes[i].vertexA;
-            float distanceToPlane = Vector3.Dot(vectorToPlane, normalPlane) / normalPlane.magnitude;
+            float distanceToPlane = Vector3.Dot(vectorToPlane, normalPlane); //Si > 0 apuntan hacia el mismo lado (el centro), sino no
 
-            if (distanceToPlane > 0.0f)
+            if (distanceToPlane > 0.0f) //Si es mayor que cero mantengo la dirección porque esta hacia el centro
             {
                 planes[i].normal = normalPlane;
             }
-            else
+            else //Si apunta hacia diferente lado la multiplico por -1 para invertir su dirección porque significa que estaba hacia afuera
             {
                 planes[i].normal = normalPlane * -1;
             }
         }
     }
 
-    float PlanePointDistance(FrustumPlane plane, Vector3 pointToCheck) //Revisar esta función
+    float PlanePointDistance(FrustumPlane plane, Vector3 pointToCheck)
     {
-        float dist = Vector3.Dot(plane.normal, (pointToCheck - plane.vertexA) / plane.normal.magnitude);
+        float dist = Vector3.Dot(plane.normal, (pointToCheck - plane.vertexA));
         return dist;
     }
 
