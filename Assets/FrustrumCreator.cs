@@ -229,14 +229,25 @@ public class FrustrumCreator : MonoBehaviour
     {
         for (int i = 0; i < boundinToCheck.Count; i++)
         {
-            if(IsObjectFrustum(i))
+            if (IsObjectFrustum(i))
             {
-                Debug.Log(boundinToCheck[i].name + " esta adentro");
-                boundinToCheck[i].gameObject.GetComponent<MeshRenderer>().enabled = true;
+                Debug.Log(boundinToCheck[i].name + " bounding esta adentro");
+
+                if (IsModelInFrustum(i))
+                {
+                    Debug.Log(boundinToCheck[i].name + " object esta adentro");
+                    boundinToCheck[i].gameObject.GetComponent<MeshRenderer>().enabled = true;
+                }
+                else
+                {
+                    Debug.Log(boundinToCheck[i].name + " object esta afuera");
+                    boundinToCheck[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
+                }
+
             }
             else
             {
-                Debug.Log(boundinToCheck[i].name + " esta afuera");
+                Debug.Log(boundinToCheck[i].name + " bounding esta afuera");
                 boundinToCheck[i].gameObject.GetComponent<MeshRenderer>().enabled = false;
             }
         }
@@ -267,6 +278,32 @@ public class FrustrumCreator : MonoBehaviour
                 //Si hay un punto dentro, entonces esta dentro
             }
         }
+        return false;
+    }
+
+    bool IsModelInFrustum(int i)
+    {
+        Mesh mesh = boundinToCheck[i].gameObject.GetComponent<MeshFilter>().mesh;
+
+        Vector3[] vertices = mesh.vertices;
+        int[] triangles = mesh.triangles;
+
+        for (int j = 0; j < triangles.Length; j += 3)
+        {
+            Vector3 vertex1 = transform.TransformPoint(vertices[triangles[i]]);
+            Vector3 vertex2 = transform.TransformPoint(vertices[triangles[i + 1]]);
+            Vector3 vertex3 = transform.TransformPoint(vertices[triangles[i + 2]]);
+
+            for (int k = 0; k < planes.Count; k++) //Recorrer hasta planes.count
+            {
+                if (PlanePointDistance(planes[k], vertex1) > 0.0f || PlanePointDistance(planes[k], vertex2) > 0.0f || PlanePointDistance(planes[k], vertex3) > 0.0f)
+                {
+                    return true;
+                    //Si hay un punto dentro, entonces esta dentro
+                }
+            }
+        }
+
         return false;
     }
 }
