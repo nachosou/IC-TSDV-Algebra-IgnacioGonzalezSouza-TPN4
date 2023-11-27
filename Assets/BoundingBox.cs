@@ -8,9 +8,9 @@ public class BoundingBox : MonoBehaviour
 
     public struct MyBounds
     {
-        private Vector3 m_Center;
+        private Vector3 cntr;
 
-        private Vector3 m_Extents;
+        private Vector3 extnd;
 
         private Vector3 min;
         private Vector3 max;
@@ -19,12 +19,12 @@ public class BoundingBox : MonoBehaviour
         {
             get
             {
-                return m_Center;
+                return cntr;
             }
 
             set
             {
-                m_Center = value;
+                cntr = value;
             }
         }
 
@@ -32,19 +32,19 @@ public class BoundingBox : MonoBehaviour
         {
             get
             {
-                return m_Extents * 2f;
+                return extnd * 2f;
             }
 
             set
             {
-                m_Extents = value * 0.5f;
+                extnd = value * 0.5f;
             }
         }
 
         public MyBounds(Vector3 center, Vector3 size, Vector3 min, Vector3 max)
         {
-            m_Center = center;
-            m_Extents = size * 0.5f;
+            cntr = center;
+            extnd = size * 0.5f;
             this.min = min;
             this.max = max;
         }
